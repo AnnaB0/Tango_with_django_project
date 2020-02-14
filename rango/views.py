@@ -6,6 +6,7 @@ from rango.forms import CategoryForm
 from rango.forms import PageForm
 from django.shortcuts import redirect
 from django.urls import reverse
+from rango.forms import PageForm
 
 def index(request):
 
@@ -21,7 +22,9 @@ def index(request):
     
 
 def about(request):
-
+    
+    print(request.method)
+    print(request.user)
     return render(request,'rango/about.html')
     
     
@@ -41,14 +44,16 @@ def show_category(request,category_name_slug):
     return render(request, 'rango/category.html',context=context_dict)
     
 def add_category(request):
-    form= CategoryForm()
+    form = CategoryForm()
     
     if request.method =='POST':
-        form= CategoryForm(request.POST)
+        form = CategoryForm(request.POST)
     
         if form.is_valid():
-            cat=form.save(commit=True)
-            return redirect('/rango/')
+           
+            
+            form.save(commit=True)
+            return redirect(reverse('rango:index'))
             
         else:
             print(form.errors)
@@ -63,12 +68,12 @@ def add_page(request,category_name_slug):
         category=None
     
     if category is None:
-        return redirect('/rango/')
+        return redirect(reverse('rango:index'))
         
-    form= PageForm()
+    form = PageForm()
     
     if request.method == 'POST':
-        form= PageForm(request.POST)
+        form = PageForm(request.POST)
         
         if form.is_valid():
             if category:
